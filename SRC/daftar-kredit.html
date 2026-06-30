@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Kredit</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="daftar-kredit-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+        <a th:href="@{/ganti-password}">🔐 Ganti Password</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">User</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <div class="section-header">
+        <h1>Daftar Pengajuan Kredit</h1>
+
+        <div class="header-actions">
+
+            <form th:action="@{/import-kredit}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="import-form">
+
+                <input type="file" name="file" accept=".xlsx" required>
+
+                <button type="submit" class="btn-import">
+                    Import Kredit
+                </button>
+            </form>
+
+            <a th:href="@{/simulasi}" class="btn-tambah">
+                + Tambah Kredit
+            </a>
+
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="dashboard-cards approval-cards kredit-statistik">
+        <div class="dashboard-card"><h2 th:text="${menunggu}">0</h2><p>Pengajuan Menunggu</p></div>
+        <div class="dashboard-card"><h2 th:text="${disetujui}">0</h2><p>Disetujui</p></div>
+        <div class="dashboard-card"><h2 th:text="${ditolak}">0</h2><p>Ditolak</p></div>
+        <div class="dashboard-card"><h2 th:text="${dicairkan}">0</h2><p>Dicairkan</p></div>
+        <div class="dashboard-card"><h2 th:text="${lunas}">0</h2><p>Lunas</p></div>
+    </div>
+
+    <div class="search-pagination-box">
+
+        <form th:action="@{/daftar-kredit}" method="get" class="search-form">
+
+            <input type="hidden" name="page" value="0">
+
+            <input type="text"
+                   name="keyword"
+                   placeholder="Cari CIF, nama nasabah, status, pinjaman, tenor, bunga..."
+                   th:value="${keyword}">
+
+            <select name="size" onchange="this.form.submit()">
+                <option value="10" th:selected="${size == 10}">10 data</option>
+                <option value="25" th:selected="${size == 25}">25 data</option>
+                <option value="50" th:selected="${size == 50}">50 data</option>
+                <option value="100" th:selected="${size == 100}">100 data</option>
+            </select>
+
+            <select name="status" onchange="this.form.submit()">
+                <option value="aktif" th:selected="${status == 'aktif'}">Data Aktif</option>
+                <option value="terhapus" th:selected="${status == 'terhapus'}">Recycle Bin</option>
+            </select>
+
+            <button type="submit">🔍 Cari</button>
+
+            <a th:href="@{/daftar-kredit}">
+                Reset
+            </a>
+
+        </form>
+
+    </div>
+
+    <div class="pagination-info">
+        Menampilkan
+        <span th:text="${startItem}">1</span>–
+        <span th:text="${endItem}">10</span>
+        dari
+        <span th:text="${totalItems}">0</span>
+        data
+    </div>
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+            <tr>
+                <th>Nomor Kontrak</th>
+                <th>CIF</th>
+                <th>Nama Pemohon</th>
+                <th>Jumlah Pinjaman</th>
+                <th>Tenor</th>
+                <th>Bunga / Tahun</th>
+                <th>Cicilan / Bulan</th>
+                <th>Status Data</th>
+                <th>Status Pengajuan</th>
+                <th class="aksi">Aksi</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(daftarKredit)}">
+                <td colspan="10" class="kosong">
+                    Tidak ada data pengajuan kredit.
+                </td>
+            </tr>
+
+            <tr th:each="k : ${daftarKredit}">
+
+                <td th:text="${k.nomorKontrak != null ? k.nomorKontrak : '-'}">KRD</td>
+
+                <td th:text="${k.nasabah != null ? k.nasabah.nomorCif : '-'}">CIF</td>
+
+                <td th:text="${k.namaPemohon}">Nama Pemohon</td>
+
+                <td class="rupiah" th:text="${k.jumlahPinjaman}">0</td>
+
+                <td th:text="${k.tenor + ' bulan'}">12 bulan</td>
+
+                <td th:text="${k.bungaTahunan + '%'}">0%</td>
+
+                <td class="rupiah" th:text="${k.cicilanPerBulan}">0</td>
+
+                <td>
+                    <span th:if="${k.statusAktif == null or k.statusAktif == true}"
+                          class="status-badge aktif">
+                        Aktif
+                    </span>
+
+                    <span th:if="${k.statusAktif == false}"
+                          class="status-badge terhapus">
+                        Terhapus
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${k.statusPengajuan == null or k.statusPengajuan == 'MENUNGGU'}"
+                          class="status-badge">
+                        Menunggu
+                    </span>
+
+                    <span th:if="${k.statusPengajuan == 'DISETUJUI'}"
+                          class="status-badge aktif">
+                        Disetujui
+                    </span>
+
+                    <span th:if="${k.statusPengajuan == 'DITOLAK'}"
+                          class="status-badge terhapus">
+                        Ditolak
+                    </span>
+
+                    <span th:if="${k.statusPengajuan == 'DICAIRKAN'}"
+                          class="status-badge aktif">
+                        Dicairkan
+                    </span>
+
+                    <span th:if="${k.statusPengajuan == 'LUNAS'}"
+                          class="status-badge aktif">
+                        Lunas
+                    </span>
+                </td>
+
+                <td>
+                    <button class="btn-detail"
+                            type="button"
+                            onclick="showKreditDetailFromButton(this)"
+                            th:data-kontrak="${k.nomorKontrak}"
+                            th:data-cif="${k.nasabah != null ? k.nasabah.nomorCif : '-'}"
+                            th:data-nama="${k.namaPemohon}"
+                            th:data-pinjaman="${k.jumlahPinjaman}"
+                            th:data-tenor="${k.tenor}"
+                            th:data-bunga="${k.bungaTahunan}"
+                            th:data-cicilan="${k.cicilanPerBulan}"
+                            th:data-pengajuan="${k.statusPengajuan}"
+                            th:data-diajukan="${k.tanggalDiajukan != null ? #temporals.format(k.tanggalDiajukan, 'dd MMMM yyyy HH:mm') : '-'}"
+                            th:data-disetujui="${k.tanggalDisetujui != null ? #temporals.format(k.tanggalDisetujui, 'dd MMMM yyyy HH:mm') : '-'}"
+                            th:data-ditolak="${k.tanggalDitolak != null ? #temporals.format(k.tanggalDitolak, 'dd MMMM yyyy HH:mm') : '-'}"
+                            th:data-dicairkan="${k.tanggalDicairkan != null ? #temporals.format(k.tanggalDicairkan, 'dd MMMM yyyy HH:mm') : '-'}"
+                            th:data-lunas="${k.tanggalLunas != null ? #temporals.format(k.tanggalLunas, 'dd MMMM yyyy HH:mm') : '-'}"
+                            th:data-oleh="${k.diprosesOleh != null ? k.diprosesOleh : '-'}">
+                        Detail
+                    </button>
+
+                    <button class="btn-detail"
+                            type="button"
+                            onclick="showJadwalAngsuranFromButton(this)"
+                            th:data-nama="${k.namaPemohon}"
+                            th:data-pinjaman="${k.jumlahPinjaman}"
+                            th:data-tenor="${k.tenor}"
+                            th:data-bunga="${k.bungaTahunan}">
+                        Jadwal
+                    </button>
+
+                    <a th:if="${k.statusPengajuan == 'DISETUJUI' or k.statusPengajuan == 'DICAIRKAN' or k.statusPengajuan == 'LUNAS'}"
+                       class="btn-detail"
+                       th:href="@{/cetak-persetujuan-kredit/{id}(id=${k.kreditId})}"
+                       target="_blank">
+                        Cetak
+                    </a>
+
+                    <a th:if="${k.statusAktif == null or k.statusAktif == true}"
+                       class="btn-edit"
+                       th:href="@{/edit-kredit/{id}(id=${k.kreditId})}">
+                        Edit
+                    </a>
+
+                    <a th:if="${(k.statusAktif == null or k.statusAktif == true) and (k.statusPengajuan == null or k.statusPengajuan == 'MENUNGGU')}"
+                       class="btn-edit"
+                       th:href="@{/setujui-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Setujui pengajuan kredit ini?')">
+                        Setujui
+                    </a>
+
+                    <a th:if="${(k.statusAktif == null or k.statusAktif == true) and (k.statusPengajuan == null or k.statusPengajuan == 'MENUNGGU')}"
+                       class="btn-hapus"
+                       th:href="@{/tolak-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Tolak pengajuan kredit ini?')">
+                        Tolak
+                    </a>
+
+                    <a th:if="${(k.statusAktif == null or k.statusAktif == true) and k.statusPengajuan == 'DISETUJUI'}"
+                       class="btn-restore"
+                       th:href="@{/cairkan-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Cairkan kredit ini?')">
+                        Cairkan
+                    </a>
+
+                    <a th:if="${(k.statusAktif == null or k.statusAktif == true) and k.statusPengajuan == 'DICAIRKAN'}"
+                       class="btn-restore"
+                       th:href="@{/lunaskan-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Tandai kredit ini lunas?')">
+                        Lunas
+                    </a>
+
+                    <a th:if="${k.statusAktif == null or k.statusAktif == true}"
+                       class="btn-hapus"
+                       th:href="@{/hapus-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Yakin ingin memindahkan data kredit ini ke Recycle Bin?')">
+                        Hapus
+                    </a>
+
+                    <a th:if="${k.statusAktif == false}"
+                       class="btn-restore"
+                       th:href="@{/restore-kredit/{id}(id=${k.kreditId})}"
+                       onclick="return confirm('Pulihkan data kredit ini?')">
+                        Restore
+                    </a>
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/daftar-kredit(page=${currentPage - 1},size=${size},keyword=${keyword},status=${status},sortBy=${sortBy},direction=${direction})}">
+            ❮
+        </a>
+
+        <span th:if="${currentPage == 0}" class="disabled">
+            ❮
+        </span>
+
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/daftar-kredit(page=${i},size=${size},keyword=${keyword},status=${status},sortBy=${sortBy},direction=${direction})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+            1
+        </a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/daftar-kredit(page=${currentPage + 1},size=${size},keyword=${keyword},status=${status},sortBy=${sortBy},direction=${direction})}">
+            ❯
+        </a>
+
+        <span th:if="${currentPage >= totalPages - 1}" class="disabled">
+            ❯
+        </span>
+
+    </div>
+
+</div>
+
+<div id="modalKredit" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modalKredit')">&times;</span>
+
+        <h2>Detail Kredit</h2>
+
+        <p><b>Nomor Kontrak:</b> <span id="kKontrak"></span></p>
+        <p><b>Nomor CIF:</b> <span id="kCif"></span></p>
+        <p><b>Nama Pemohon:</b> <span id="kNama"></span></p>
+        <p><b>Jumlah Pinjaman:</b> <span id="kPinjaman"></span></p>
+        <p><b>Tenor:</b> <span id="kTenor"></span></p>
+        <p><b>Bunga / Tahun:</b> <span id="kBunga"></span></p>
+        <p><b>Cicilan / Bulan:</b> <span id="kCicilan"></span></p>
+        <p><b>Status Pengajuan:</b> <span id="kPengajuan"></span></p>
+
+        <hr>
+        <h3>Histori Approval</h3>
+        <p><b>Diajukan:</b> <span id="kDiajukan"></span></p>
+        <p><b>Disetujui:</b> <span id="kDisetujui"></span></p>
+        <p><b>Ditolak:</b> <span id="kDitolak"></span></p>
+        <p><b>Dicairkan:</b> <span id="kDicairkan"></span></p>
+        <p><b>Lunas:</b> <span id="kLunas"></span></p>
+        <p><b>Oleh:</b> <span id="kOleh"></span></p>
+    </div>
+</div>
+
+<div id="modalJadwal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal('modalJadwal')">
+            &times;
+        </span>
+
+        <h2>Jadwal Angsuran Kredit</h2>
+
+        <p>
+            <b>Nama Pemohon:</b>
+            <span id="jadwalNama"></span>
+        </p>
+
+        <div class="jadwal-summary">
+            <div class="jadwal-card">
+                Pinjaman
+                <span id="jadwalPinjaman"></span>
+            </div>
+
+            <div class="jadwal-card">
+                Tenor
+                <span id="jadwalTenor"></span>
+            </div>
+
+            <div class="jadwal-card">
+                Bunga
+                <span id="jadwalBunga"></span>
+            </div>
+
+            <div class="jadwal-card">
+                Cicilan
+                <span id="jadwalCicilan"></span>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Bulan</th>
+                    <th>Pokok</th>
+                    <th>Bunga</th>
+                    <th>Total Angsuran</th>
+                    <th>Sisa Pinjaman</th>
+                </tr>
+                </thead>
+
+                <tbody id="jadwalBody">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function formatRupiah(nilai) {
+        return new Intl.NumberFormat(
+            "id-ID",
+            {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0
+            }
+        ).format(Number(nilai));
+    }
+
+    document.querySelectorAll(".rupiah").forEach(function (cell) {
+        const angka = Number(cell.innerText);
+
+        if (!isNaN(angka)) {
+            cell.innerText = formatRupiah(angka);
+        }
+    });
+
+    function showKreditDetailFromButton(button) {
+        const kontrak = button.dataset.kontrak || "-";
+        const cif = button.dataset.cif;
+        const nama = button.dataset.nama;
+        const pinjaman = button.dataset.pinjaman;
+        const tenor = button.dataset.tenor;
+        const bunga = button.dataset.bunga;
+        const cicilan = button.dataset.cicilan;
+        const pengajuan = button.dataset.pengajuan || "MENUNGGU";
+
+        document.getElementById("kKontrak").innerText = kontrak;
+        document.getElementById("kCif").innerText = cif;
+        document.getElementById("kNama").innerText = nama;
+        document.getElementById("kPinjaman").innerText = formatRupiah(pinjaman);
+        document.getElementById("kTenor").innerText = tenor + " bulan";
+        document.getElementById("kBunga").innerText = bunga + "%";
+        document.getElementById("kCicilan").innerText = formatRupiah(cicilan);
+        document.getElementById("kPengajuan").innerText = pengajuan;
+        document.getElementById("kDiajukan").innerText = button.dataset.diajukan || "-";
+        document.getElementById("kDisetujui").innerText = button.dataset.disetujui || "-";
+        document.getElementById("kDitolak").innerText = button.dataset.ditolak || "-";
+        document.getElementById("kDicairkan").innerText = button.dataset.dicairkan || "-";
+        document.getElementById("kLunas").innerText = button.dataset.lunas || "-";
+        document.getElementById("kOleh").innerText = button.dataset.oleh || "-";
+
+        document.getElementById("modalKredit").style.display = "block";
+    }
+
+    function showJadwalAngsuranFromButton(button) {
+        const nama = button.dataset.nama;
+        const pinjaman = button.dataset.pinjaman;
+        const tenor = button.dataset.tenor;
+        const bunga = button.dataset.bunga;
+
+        showJadwalAngsuran(nama, pinjaman, tenor, bunga);
+    }
+
+    function showJadwalAngsuran(nama, pinjaman, tenor, bungaTahunan) {
+        const jumlahPinjaman = Number(pinjaman);
+        const jumlahTenor = Number(tenor);
+        const bunga = Number(bungaTahunan);
+
+        const pokokBulanan = jumlahPinjaman / jumlahTenor;
+        const bungaBulanan = jumlahPinjaman * (bunga / 100) / 12;
+        const totalAngsuran = pokokBulanan + bungaBulanan;
+
+        let sisaPinjaman = jumlahPinjaman;
+        let isiTabel = "";
+
+        for (let i = 1; i <= jumlahTenor; i++) {
+            sisaPinjaman -= pokokBulanan;
+
+            if (sisaPinjaman < 0) {
+                sisaPinjaman = 0;
+            }
+
+            isiTabel += `
+                <tr>
+                    <td>${i}</td>
+                    <td>${formatRupiah(Math.round(pokokBulanan))}</td>
+                    <td>${formatRupiah(Math.round(bungaBulanan))}</td>
+                    <td>${formatRupiah(Math.round(totalAngsuran))}</td>
+                    <td>${formatRupiah(Math.round(sisaPinjaman))}</td>
+                </tr>
+            `;
+        }
+
+        document.getElementById("jadwalNama").innerText = nama;
+        document.getElementById("jadwalPinjaman").innerText = formatRupiah(jumlahPinjaman);
+        document.getElementById("jadwalTenor").innerText = jumlahTenor + " bulan";
+        document.getElementById("jadwalBunga").innerText = bunga + "% / tahun";
+        document.getElementById("jadwalCicilan").innerText = formatRupiah(Math.round(totalAngsuran));
+
+        document.getElementById("jadwalBody").innerHTML = isiTabel;
+        document.getElementById("modalJadwal").style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        const modalKredit = document.getElementById("modalKredit");
+        const modalJadwal = document.getElementById("modalJadwal");
+
+        if (event.target === modalKredit) {
+            modalKredit.style.display = "none";
+        }
+
+        if (event.target === modalJadwal) {
+            modalJadwal.style.display = "none";
+        }
+    };
+</script>
+
+</body>
+</html>

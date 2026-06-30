@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Beranda</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="home-bg">
+
+<nav class="sidebar">
+
+    <div class="sidebar-logo">
+        <img th:src="@{/images/Bank_Victoria_logo.png}"
+             alt="Bank Victoria"
+             class="logo-bank-sidebar">
+    </div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+            🔐 Ganti Password
+        </a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">postgres</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <div class="welcome-card">
+
+        <div id="greetingEmoji" class="greeting-emoji">
+            ☀️
+        </div>
+
+        <h2 id="greetingText">
+            Selamat Pagi
+        </h2>
+
+        <div id="currentTime" class="clock-time">
+            00:00:00
+        </div>
+
+        <div id="currentDate" class="clock-date">
+            Senin, 29 Juni 2026
+        </div>
+
+    </div>
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <h2 th:text="${totalNasabah}">0</h2>
+            <p>Jumlah Nasabah</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${totalKredit}">0</h2>
+            <p>Jumlah Kredit</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${totalUser}">0</h2>
+            <p>Jumlah User</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 class="rupiah-dashboard" th:text="${totalSaldo}">0</h2>
+            <p>Total Saldo Nasabah</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 class="rupiah-dashboard" th:text="${totalPinjaman}">0</h2>
+            <p>Total Nominal Pinjaman</p>
+        </div>
+
+    </div>
+
+    <h2>Dashboard Approval Kredit</h2>
+
+    <div class="dashboard-cards approval-cards">
+
+        <div class="dashboard-card">
+            <h2 th:text="${menunggu}">0</h2>
+            <p>Pengajuan Menunggu</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${disetujui}">0</h2>
+            <p>Disetujui</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${ditolak}">0</h2>
+            <p>Ditolak</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${dicairkan}">0</h2>
+            <p>Dicairkan</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${lunas}">0</h2>
+            <p>Lunas</p>
+        </div>
+
+    </div>
+
+    <h2>Aktivitas Hari Ini</h2>
+
+    <div class="dashboard-cards activity-cards">
+
+        <div class="dashboard-card">
+            <h2 th:text="${loginHariIni}">0</h2>
+            <p>Login Hari Ini</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${inputNasabahHariIni}">0</h2>
+            <p>Input Nasabah</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${pengajuanKreditHariIni}">0</h2>
+            <p>Pengajuan Kredit</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${approvalKreditHariIni}">0</h2>
+            <p>Approval Kredit</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${importExcelHariIni}">0</h2>
+            <p>Import Excel</p>
+        </div>
+
+    </div>
+
+    <h2>Dashboard Bank</h2>
+
+    <div class="dashboard-cards activity-cards">
+
+        <div class="dashboard-card">
+            <h2 class="rupiah-dashboard" th:text="${totalOutstandingKredit}">0</h2>
+            <p>Total Outstanding Kredit</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 class="rupiah-dashboard" th:text="${totalKreditDicairkan}">0</h2>
+            <p>Total Kredit Dicairkan</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 class="rupiah-dashboard" th:text="${totalKreditLunas}">0</h2>
+            <p>Total Kredit Lunas</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 th:text="${pengajuanBulanIni}">0</h2>
+            <p>Pengajuan Bulan Ini</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function formatRupiahDashboard(nilai) {
+
+    nilai = Number(nilai);
+
+    if (isNaN(nilai))
+        return "Rp 0";
+
+    if (nilai >= 1000000000000)
+        return "Rp " + (nilai / 1000000000000).toFixed(1).replace(".", ",") + " T";
+
+    if (nilai >= 1000000000)
+        return "Rp " + (nilai / 1000000000).toFixed(1).replace(".", ",") + " M";
+
+    if (nilai >= 1000000)
+        return "Rp " + (nilai / 1000000).toFixed(1).replace(".", ",") + " Jt";
+
+    if (nilai >= 1000)
+        return "Rp " + (nilai / 1000).toFixed(1).replace(".", ",") + " Rb";
+
+    return "Rp " + nilai;
+
+}
+
+document.querySelectorAll(".rupiah-dashboard").forEach(function(item) {
+
+    item.innerHTML = formatRupiahDashboard(item.textContent.trim());
+
+});
+
+function updateClock() {
+
+    const now = new Date();
+
+    const hour = now.getHours();
+
+    let greeting = "";
+    let emoji = "";
+
+    if (hour >= 5 && hour < 11) {
+
+        greeting = "Selamat Pagi";
+        emoji = "☀️";
+
+    } else if (hour >= 11 && hour < 15) {
+
+        greeting = "Selamat Siang";
+        emoji = "🌤️";
+
+    } else if (hour >= 15 && hour < 18) {
+
+        greeting = "Selamat Sore";
+        emoji = "🌇";
+
+    } else {
+
+        greeting = "Selamat Malam";
+        emoji = "🌙";
+
+    }
+
+    const time = now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    const date = now.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+    document.getElementById("greetingText").innerHTML = greeting;
+    document.getElementById("greetingEmoji").innerHTML = emoji;
+    document.getElementById("currentTime").innerHTML = time;
+    document.getElementById("currentDate").innerHTML = date;
+
+}
+
+function startClock() {
+
+    updateClock();
+
+    const now = new Date();
+    const delay = 1000 - now.getMilliseconds();
+
+    setTimeout(function() {
+
+        updateClock();
+
+        setInterval(updateClock, 1000);
+
+    }, delay);
+
+}
+
+startClock();
+
+</script>
+
+</body>
+</html>

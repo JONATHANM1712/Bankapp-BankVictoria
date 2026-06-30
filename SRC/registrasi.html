@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrasi - Bank Victoria</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="login-bg">
+
+<div class="login-box">
+
+    <div class="auth-brand">
+        <img th:src="@{/images/Bank_Victoria_logo.png}"
+             alt="Bank Victoria"
+             class="logo-bank-auth">
+    </div>
+
+
+    <p class="subtitle">
+        Buat akun baru untuk mengakses sistem internal Bank Victoria.
+    </p>
+
+    <div th:if="${error}" class="alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/registrasi}" method="post">
+
+        <input type="text"
+               name="username"
+               placeholder="Username"
+               required>
+
+        <input type="email"
+               name="email"
+               placeholder="Email"
+               required>
+
+        <input type="password"
+               name="password"
+               placeholder="Password"
+               required>
+
+        <button type="submit">Registrasi</button>
+
+    </form>
+
+    <p class="register-link">
+        Sudah punya akun?
+        <a th:href="@{/login}">Login</a>
+    </p>
+
+</div>
+
+</body>
+</html>

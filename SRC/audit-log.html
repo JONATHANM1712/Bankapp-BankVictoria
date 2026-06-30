@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Log</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="audit-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+            🔐 Ganti Password
+        </a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">postgres</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container audit-container">
+
+    <h1>Audit Log Profesional</h1>
+    <p class="subtitle">Riwayat aktivitas sistem, user, IP address, status perubahan, dan modul.</p>
+
+    <form th:action="@{/audit-log}" method="get" class="search-box">
+        <input type="text"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder="Cari username, role, modul, aksi, IP...">
+
+        <select name="size">
+            <option value="10" th:selected="${size == 10}">10</option>
+            <option value="25" th:selected="${size == 25}">25</option>
+            <option value="50" th:selected="${size == 50}">50</option>
+            <option value="100" th:selected="${size == 100}">100</option>
+        </select>
+
+        <button type="submit">Cari</button>
+    </form>
+
+    <div class="table-wrapper audit-table-wrapper">
+        <table class="audit-table">
+            <thead>
+            <tr>
+                <th>Waktu</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Modul</th>
+                <th>Aksi</th>
+                <th>Data ID</th>
+                <th>Sebelum</th>
+                <th>Sesudah</th>
+                <th>IP</th>
+                <th>Keterangan</th>
+                <th>User-Agent</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="log : ${daftarAudit}">
+                <td th:text="${#temporals.format(log.waktu, 'dd MMM yyyy HH:mm:ss')}">-</td>
+                <td th:text="${log.username}">-</td>
+                <td th:text="${log.role}">-</td>
+                <td th:text="${log.modul}">-</td>
+                <td>
+                    <span class="badge badge-info" th:text="${log.aksi}">AKSI</span>
+                </td>
+                <td th:text="${log.dataId} ?: '-'">-</td>
+                <td th:text="${log.statusSebelum} ?: '-'">-</td>
+                <td th:text="${log.statusSesudah} ?: '-'">-</td>
+                <td th:text="${log.ipAddress} ?: '-'">-</td>
+                <td th:text="${log.keterangan}">-</td>
+                <td class="user-agent" th:text="${log.userAgent} ?: '-'">-</td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(daftarAudit)}">
+                <td colspan="11" class="text-center">Belum ada audit log.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+<div class="audit-pagination">
+
+    <a class="page-btn"
+       th:if="${currentPage > 0}"
+       th:href="@{/audit-log(page=${currentPage - 1}, size=${size}, keyword=${keyword})}">
+        Sebelumnya
+    </a>
+
+    <span class="page-info"
+          th:text="'Halaman ' + ${currentPage + 1} + ' dari ' + ${totalPages == 0 ? 1 : totalPages}">
+        Halaman 1 dari 1
+    </span>
+
+    <a class="page-btn"
+       th:if="${currentPage + 1 < totalPages}"
+       th:href="@{/audit-log(page=${currentPage + 1}, size=${size}, keyword=${keyword})}">
+        Berikutnya
+    </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Daftar Nasabah</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body class="daftar-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+
+        <a th:href="@{/}">
+            🏠 Beranda
+        </a>
+
+        <a th:href="@{/input}">
+            ➕ Input Nasabah
+        </a>
+
+        <a th:href="@{/daftar}">
+            👥 Daftar Nasabah
+        </a>
+
+        <a th:href="@{/simulasi}">
+            💳 Simulasi Kredit
+        </a>
+
+        <a th:href="@{/daftar-kredit}">
+            📋 Daftar Kredit
+        </a>
+
+        <a th:href="@{/laporan}">
+            📊 Laporan
+        </a>
+
+        <a th:href="@{/tentang}">
+            ℹ️ Tentang Aplikasi
+        </a>
+
+        <a th:if="${session.userLogin != null
+                    and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null
+                    and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null
+                    and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+    🔐 Ganti Password
+</a>
+
+    </div>
+
+    <div class="sidebar-user">
+
+        <div class="login-user">
+            👤
+            <span th:text="${session.username}">
+                postgres
+            </span>
+        </div>
+
+        <a th:href="@{/logout}"
+           class="logout-btn">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <!-- ===============================
+         HEADER
+    ================================ -->
+
+    <div class="section-header">
+
+        <h1>Daftar Nasabah</h1>
+
+        <div class="header-actions">
+
+            <form th:action="@{/import-nasabah}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="import-form">
+
+                <input type="file"
+                       name="file"
+                       accept=".xlsx"
+                       required>
+
+                <button type="submit"
+                        class="btn-import">
+                    Import Nasabah
+                </button>
+
+            </form>
+
+            <a th:href="@{/input}"
+               class="btn-tambah">
+                + Tambah Nasabah
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ===============================
+         PESAN
+    ================================ -->
+
+    <div th:if="${success}"
+         class="alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}"
+         class="alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- ===============================
+         SEARCH, FILTER, SORTING
+    ================================ -->
+
+    <div class="search-pagination-box">
+
+        <form th:action="@{/daftar}"
+              method="get"
+              class="search-form">
+
+            <input type="hidden"
+                   name="page"
+                   value="0">
+
+            <input type="text"
+                   name="keyword"
+                   placeholder="Cari CIF, nama, KTP, HP, rekening, alamat..."
+                   th:value="${keyword}">
+
+            <select name="size"
+                    onchange="this.form.submit()">
+
+                <option value="10"
+                        th:selected="${size == 10}">
+                    10 data
+                </option>
+
+                <option value="25"
+                        th:selected="${size == 25}">
+                    25 data
+                </option>
+
+                <option value="50"
+                        th:selected="${size == 50}">
+                    50 data
+                </option>
+
+                <option value="100"
+                        th:selected="${size == 100}">
+                    100 data
+                </option>
+
+            </select>
+
+            <select name="status"
+                    onchange="this.form.submit()">
+
+                <option value="aktif"
+                        th:selected="${status == 'aktif'}">
+                    Data Aktif
+                </option>
+
+                <option value="terhapus"
+                        th:selected="${status == 'terhapus'}">
+                    Recycle Bin
+                </option>
+
+            </select>
+
+            <button type="submit">
+                🔍 Cari
+            </button>
+
+            <a th:href="@{/daftar}">
+                Reset
+            </a>
+
+        </form>
+
+    </div>
+
+    <!-- ===============================
+         INFORMASI PAGINATION
+    ================================ -->
+
+    <div class="pagination-info">
+
+        Menampilkan
+
+        <span th:text="${startItem}">
+            1
+        </span>–
+
+        <span th:text="${endItem}">
+            10
+        </span>
+
+        dari
+
+        <span th:text="${totalItems}">
+            0
+        </span>
+
+        data
+
+    </div>
+
+    <!-- ===============================
+         TABEL NASABAH
+    ================================ -->
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+<thead>
+<tr>
+    <th>
+        CIF
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorCif',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorCif',direction='desc')}">🔻</a>
+    </th>
+
+    <th>
+        Nama
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='namaNasabah',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='namaNasabah',direction='desc')}">🔻</a>
+    </th>
+
+    <th>
+        KTP
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorKtp',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorKtp',direction='desc')}">🔻</a>
+    </th>
+
+    <th>Alamat</th>
+    <th>HP</th>
+
+    <th>
+        Rekening
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorRekening',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='nomorRekening',direction='desc')}">🔻</a>
+    </th>
+
+    <th>
+        Tanggal Buka
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='tanggalBukaRekening',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='tanggalBukaRekening',direction='desc')}">🔻</a>
+    </th>
+
+    <th>
+        Saldo
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='saldo',direction='asc')}">🔺</a>
+        <a th:href="@{/daftar(page=0,size=${size},keyword=${keyword},status=${status},sortBy='saldo',direction='desc')}">🔻</a>
+    </th>
+
+    <th>Status</th>
+    <th class="aksi">Aksi</th>
+</tr>
+</thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(daftarNasabah)}">
+
+                <td colspan="10"
+                    class="kosong">
+                    Tidak ada data nasabah.
+                </td>
+
+            </tr>
+
+            <tr th:each="n : ${daftarNasabah}">
+
+                <td th:text="${n.nomorCif}">
+                    CIF
+                </td>
+
+                <td th:text="${n.namaNasabah}">
+                    Nama
+                </td>
+
+                <td th:text="${n.nomorKtp}">
+                    KTP
+                </td>
+
+                <td th:text="${n.alamat}">
+                    Alamat
+                </td>
+
+                <td th:text="${n.handphone}">
+                    HP
+                </td>
+
+                <td th:text="${n.nomorRekening}">
+                    Rekening
+                </td>
+
+                <td th:text="${n.tanggalBukaRekening}">
+                    Tanggal
+                </td>
+
+                <td class="rupiah"
+                    th:text="${n.saldo}">
+                    0
+                </td>
+
+                <td>
+                    <span th:if="${n.statusAktif == null or n.statusAktif == true}"
+                          class="status-badge aktif">
+                        Aktif
+                    </span>
+
+                    <span th:if="${n.statusAktif == false}"
+                          class="status-badge terhapus">
+                        Terhapus
+                    </span>
+                </td>
+
+                <td>
+
+                    <button class="btn-detail"
+                            type="button"
+                            th:attr="onclick=|showNasabahDetail(
+                                '${n.nomorCif}',
+                                '${n.namaNasabah}',
+                                '${n.nomorKtp}',
+                                '${n.alamat}',
+                                '${n.handphone}',
+                                '${n.nomorRekening}',
+                                '${n.tanggalBukaRekening}',
+                                '${n.saldo}'
+                            )|">
+                        Detail
+                    </button>
+
+                    <a th:if="${n.statusAktif == null or n.statusAktif == true}"
+                       class="btn-edit"
+                       th:href="@{/edit/{nomorCif}
+                       (nomorCif=${n.nomorCif})}">
+                        Edit
+                    </a>
+
+                    <a th:if="${n.statusAktif == null or n.statusAktif == true}"
+                       class="btn-hapus"
+                       th:href="@{/hapus/{nomorCif}
+                       (nomorCif=${n.nomorCif})}"
+                       onclick="return confirm('Yakin ingin memindahkan data nasabah ini ke Recycle Bin?')">
+                        Hapus
+                    </a>
+
+                    <a th:if="${n.statusAktif == false}"
+                       class="btn-restore"
+                       th:href="@{/restore/{nomorCif}
+                       (nomorCif=${n.nomorCif})}"
+                       onclick="return confirm('Pulihkan data nasabah ini?')">
+                        Restore
+                    </a>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- ===============================
+         PAGINATION
+    ================================ -->
+
+    <div class="pagination"
+         th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/daftar(
+               page=${currentPage - 1},
+               size=${size},
+               keyword=${keyword},
+               status=${status},
+               sortBy=${sortBy},
+               direction=${direction}
+           )}">
+            ❮
+        </a>
+
+        <span th:if="${currentPage == 0}"
+              class="disabled">
+            ❮
+        </span>
+
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/daftar(
+               page=${i},
+               size=${size},
+               keyword=${keyword},
+               status=${status},
+               sortBy=${sortBy},
+               direction=${direction}
+           )}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+            1
+        </a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/daftar(
+               page=${currentPage + 1},
+               size=${size},
+               keyword=${keyword},
+               status=${status},
+               sortBy=${sortBy},
+               direction=${direction}
+           )}">
+            ❯
+        </a>
+
+        <span th:if="${currentPage >= totalPages - 1}"
+              class="disabled">
+            ❯
+        </span>
+
+    </div>
+
+</div>
+
+<!-- ===============================
+     MODAL DETAIL NASABAH
+================================ -->
+
+<div id="modalNasabah"
+     class="modal">
+
+    <div class="modal-content">
+
+        <span class="close"
+              onclick="closeModal('modalNasabah')">
+            &times;
+        </span>
+
+        <h2>Detail Nasabah</h2>
+
+        <p>
+            <b>CIF:</b>
+            <span id="dCif"></span>
+        </p>
+
+        <p>
+            <b>Nama:</b>
+            <span id="dNama"></span>
+        </p>
+
+        <p>
+            <b>KTP:</b>
+            <span id="dKtp"></span>
+        </p>
+
+        <p>
+            <b>Alamat:</b>
+            <span id="dAlamat"></span>
+        </p>
+
+        <p>
+            <b>HP:</b>
+            <span id="dHp"></span>
+        </p>
+
+        <p>
+            <b>Rekening:</b>
+            <span id="dRekening"></span>
+        </p>
+
+        <p>
+            <b>Tanggal Buka:</b>
+            <span id="dTanggal"></span>
+        </p>
+
+        <p>
+            <b>Saldo:</b>
+            <span id="dSaldo"></span>
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+    document
+        .querySelectorAll(".rupiah")
+        .forEach(function (cell) {
+
+            const angka = Number(cell.innerText);
+
+            if (!isNaN(angka)) {
+                cell.innerText =
+                    new Intl.NumberFormat(
+                        "id-ID",
+                        {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0
+                        }
+                    ).format(angka);
+            }
+        });
+
+    function showNasabahDetail(
+        cif,
+        nama,
+        ktp,
+        alamat,
+        hp,
+        rekening,
+        tanggal,
+        saldo
+    ) {
+        document.getElementById("dCif").innerText = cif;
+        document.getElementById("dNama").innerText = nama;
+        document.getElementById("dKtp").innerText = ktp;
+        document.getElementById("dAlamat").innerText = alamat;
+        document.getElementById("dHp").innerText = hp;
+        document.getElementById("dRekening").innerText = rekening;
+        document.getElementById("dTanggal").innerText = tanggal;
+
+        document.getElementById("dSaldo").innerText =
+            new Intl.NumberFormat(
+                "id-ID",
+                {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0
+                }
+            ).format(Number(saldo));
+
+        document.getElementById("modalNasabah").style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById("modalNasabah");
+
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+<script th:src="@{/js/app-ui.js}"></script>
+
+</body>
+</html>

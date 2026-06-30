@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="user-bg">
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+    🔐 Ganti Password
+</a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">postgres</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+    <h1>Edit User</h1>
+
+<div th:if="${error}"
+     style="background:red; color:white; font-weight:bold; padding:14px; border-radius:10px; margin:15px 0; text-align:center;">
+    <p th:text="${error}" style="margin:0; color:white; font-weight:bold;"></p>
+</div>
+
+    <form th:action="@{/users/update}" method="post" class="form-box">
+
+        <input type="hidden" name="id" th:value="${user.id}">
+
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" th:value="${user.username}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" th:value="${user.email}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Password Lama</label>
+            <input type="password"
+                   name="oldPassword"
+                   placeholder="Isi hanya jika ingin mengganti password">
+        </div>
+
+        <div class="form-group">
+            <label>Password Baru</label>
+            <input type="password"
+                   name="password"
+                   placeholder="Kosongkan jika tidak ingin mengubah password">
+        </div>
+
+        <div class="form-group">
+            <label>Konfirmasi Password Baru</label>
+            <input type="password"
+                   name="confirmPassword"
+                   placeholder="Ulangi password baru">
+        </div>
+
+        <div class="form-group">
+            <label>Role</label>
+            <select name="role" required>
+                <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                <option value="USER" th:selected="${user.role == 'USER'}">USER</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="save-btn">Simpan Perubahan</button>
+            <a th:href="@{/users}" class="cancel-btn">Batal</a>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

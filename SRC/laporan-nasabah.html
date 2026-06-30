@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Laporan Nasabah</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        @media print {
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Laporan Data Nasabah</h1>
+
+    <button onclick="window.print()"
+            class="btn-print">
+        Cetak
+    </button>
+
+    <table class="data-table">
+
+        <tr>
+            <th>No</th>
+            <th>CIF</th>
+            <th>Nama</th>
+            <th>KTP</th>
+            <th>Rekening</th>
+            <th>Saldo</th>
+        </tr>
+
+        <tr th:each="n, stat : ${nasabahList}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${n.nomorCif}"></td>
+            <td th:text="${n.namaNasabah}"></td>
+            <td th:text="${n.nomorKtp}"></td>
+            <td th:text="${n.nomorRekening}"></td>
+            <td th:text="${n.saldo}"></td>
+        </tr>
+
+    </table>
+
+</div>
+
+</body>
+</html>

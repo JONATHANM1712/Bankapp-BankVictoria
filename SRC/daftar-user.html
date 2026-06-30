@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen User</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="user-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+        <a th:href="@{/ganti-password}">🔐 Ganti Password</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">User</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <h1>Manajemen User</h1>
+
+    <p>
+        Halaman ini digunakan untuk mengelola akun pengguna aplikasi BankApp.
+    </p>
+
+    <a th:href="@{/users/tambah}" class="btn-tambah">
+        ➕ Tambah User
+    </a>
+
+    <div th:if="${success}" class="alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="search-pagination-box">
+        <form th:action="@{/users}" method="get" class="search-form">
+
+            <input type="hidden" name="page" value="0">
+
+            <input type="text"
+                   name="keyword"
+                   placeholder="Cari username, email, atau role..."
+                   th:value="${keyword}">
+
+            <select name="size" onchange="this.form.submit()">
+                <option value="10" th:selected="${size == 10}">10 data</option>
+                <option value="25" th:selected="${size == 25}">25 data</option>
+                <option value="50" th:selected="${size == 50}">50 data</option>
+                <option value="100" th:selected="${size == 100}">100 data</option>
+            </select>
+
+            <button type="submit">🔍 Cari</button>
+
+            <a th:href="@{/users(size=${size})}">
+                Reset
+            </a>
+
+        </form>
+    </div>
+
+    <div class="pagination-info">
+        Menampilkan
+        <span th:text="${startItem}">1</span>–
+        <span th:text="${endItem}">10</span>
+        dari
+        <span th:text="${totalItems}">0</span>
+        data
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status Akun</th>
+                <th>Percobaan Login</th>
+                <th class="aksi">Aksi</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(daftarUser)}">
+                <td colspan="7" class="kosong">
+                    Tidak ada data user.
+                </td>
+            </tr>
+
+            <tr th:each="u : ${daftarUser}">
+
+                <td th:text="${u.id}">1</td>
+
+                <td th:text="${u.username}">postgres</td>
+
+                <td th:text="${u.email}">postgres@gmail.com</td>
+
+                <td th:text="${u.role}">ADMIN</td>
+
+                <td>
+                    <span th:if="${u.accountLocked == true}"
+                          class="status-badge terhapus">
+                        Terkunci
+                    </span>
+
+                    <span th:if="${u.accountLocked == null or u.accountLocked == false}"
+                          class="status-badge aktif">
+                        Aktif
+                    </span>
+                </td>
+
+                <td th:text="${u.loginAttempt}">0</td>
+
+                <td>
+                    <a class="btn-edit"
+                       th:href="@{/users/edit/{id}(id=${u.id})}">
+                        Edit
+                    </a>
+
+                    <a th:if="${u.accountLocked == true}"
+                       class="btn-restore"
+                       th:href="@{/users/unlock/{id}(id=${u.id})}"
+                       onclick="return confirm('Buka kunci akun ini?')">
+                        Unlock
+                    </a>
+
+                    <a class="btn-hapus"
+                       th:href="@{/users/delete/{id}(id=${u.id})}"
+                       onclick="return confirm('Yakin ingin menghapus user ini?')">
+                        Hapus
+                    </a>
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/users(page=${currentPage - 1},size=${size},keyword=${keyword})}">
+            ❮
+        </a>
+
+        <span th:if="${currentPage == 0}" class="disabled">
+            ❮
+        </span>
+
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/users(page=${i},size=${size},keyword=${keyword})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+            1
+        </a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/users(page=${currentPage + 1},size=${size},keyword=${keyword})}">
+            ❯
+        </a>
+
+        <span th:if="${currentPage >= totalPages - 1}" class="disabled">
+            ❯
+        </span>
+
+    </div>
+
+</div>
+
+</body>
+</html>

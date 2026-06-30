@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Kredit</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="daftar-kredit-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+    🔐 Ganti Password
+</a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">postgres</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <h1>Detail Kredit</h1>
+
+    <div class="detail-card">
+
+        <h2>Data Nasabah</h2>
+
+        <p>
+            <b>Nomor CIF:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.nomorCif : '-'}"></span>
+        </p>
+
+        <p>
+            <b>Nama Nasabah:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.namaNasabah : '-'}"></span>
+        </p>
+
+        <p>
+            <b>Nomor Rekening:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.nomorRekening : '-'}"></span>
+        </p>
+
+        <p>
+            <b>Nomor KTP:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.nomorKtp : '-'}"></span>
+        </p>
+
+        <p>
+            <b>Handphone:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.handphone : '-'}"></span>
+        </p>
+
+        <p>
+            <b>Alamat:</b>
+            <span th:text="${kredit.nasabah != null ? kredit.nasabah.alamat : '-'}"></span>
+        </p>
+
+        <hr>
+
+        <h2>Data Kredit</h2>
+
+        <p>
+            <b>Jumlah Pinjaman:</b>
+            <span class="rupiah" th:text="${kredit.jumlahPinjaman}"></span>
+        </p>
+
+        <p>
+            <b>Tenor:</b>
+            <span th:text="${kredit.tenor} + ' bulan'"></span>
+        </p>
+
+        <p>
+            <b>Bunga Tahunan:</b>
+            <span th:text="${kredit.bungaTahunan} + '%'"></span>
+        </p>
+
+        <p>
+            <b>Cicilan per Bulan:</b>
+            <span class="rupiah" th:text="${kredit.cicilanPerBulan}"></span>
+        </p>
+
+    </div>
+
+    <br>
+
+    <a class="btn-edit" th:href="@{/edit-kredit/{id}(id=${kredit.kreditId})}">
+        Edit Kredit
+    </a>
+
+    <a class="btn-hapus"
+       th:href="@{/hapus-kredit/{id}(id=${kredit.kreditId})}"
+       onclick="return confirm('Yakin ingin menghapus data kredit ini?')">
+        Hapus Kredit
+    </a>
+
+    <a class="batal" th:href="@{/daftar-kredit}">
+        Kembali
+    </a>
+
+</div>
+
+<script>
+    document.querySelectorAll(".rupiah").forEach(function(item) {
+        const angka = Number(item.innerText);
+
+        if (!isNaN(angka)) {
+            item.innerText = new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
+    });
+</script>
+
+</body>
+</html>

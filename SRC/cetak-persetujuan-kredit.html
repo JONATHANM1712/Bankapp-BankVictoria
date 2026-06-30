@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Persetujuan Kredit</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="laporan-bg print-page">
+<div class="surat-container">
+    <div class="surat-header">
+        <h1>Surat Persetujuan Kredit</h1>
+        <p>BankApp - Dokumen Persetujuan Internal</p>
+    </div>
+
+    <div class="surat-info">
+        <p><b>Nama Nasabah:</b> <span th:text="${kredit.namaPemohon}">Nama</span></p>
+        <p><b>Nomor CIF:</b> <span th:text="${kredit.nasabah != null ? kredit.nasabah.nomorCif : '-'}">CIF</span></p>
+        <p><b>Nomor Kontrak:</b> <span th:text="${kredit.nomorKontrak}">KRD</span></p>
+        <p><b>Jumlah Pinjaman:</b> <span class="rupiah" th:text="${kredit.jumlahPinjaman}">0</span></p>
+        <p><b>Tenor:</b> <span th:text="${kredit.tenor + ' bulan'}">0 bulan</span></p>
+        <p><b>Bunga:</b> <span th:text="${kredit.bungaTahunan + '% per tahun'}">0%</span></p>
+        <p><b>Status:</b> <span th:text="${kredit.statusPengajuan}">DISETUJUI</span></p>
+    </div>
+
+    <h2>Jadwal Angsuran</h2>
+    <table class="data-table print-table">
+        <thead>
+        <tr>
+            <th>Bulan</th>
+            <th>Pokok</th>
+            <th>Bunga</th>
+            <th>Total Angsuran</th>
+        </tr>
+        </thead>
+        <tbody id="jadwalCetak"></tbody>
+    </table>
+
+    <div class="ttd-area">
+        <div></div>
+        <div class="ttd-box">
+            <p>Pejabat Bank</p>
+            <br><br><br>
+            <p><b>( ____________________ )</b></p>
+        </div>
+    </div>
+
+    <button onclick="window.print()" class="save-btn no-print">Cetak / Simpan PDF</button>
+</div>
+
+<script th:inline="javascript">
+    const pinjaman = Number(/*[[${kredit.jumlahPinjaman}]]*/ 0);
+    const tenor = Number(/*[[${kredit.tenor}]]*/ 0);
+    const bungaTahunan = Number(/*[[${kredit.bungaTahunan}]]*/ 0);
+
+    function formatRupiah(nilai) {
+        return new Intl.NumberFormat("id-ID", {style: "currency", currency: "IDR", minimumFractionDigits: 0}).format(Number(nilai));
+    }
+
+    document.querySelectorAll(".rupiah").forEach(el => el.innerText = formatRupiah(el.innerText));
+
+    const pokok = pinjaman / tenor;
+    const bunga = pinjaman * (bungaTahunan / 100) / 12;
+    const total = pokok + bunga;
+    let rows = "";
+    for (let i = 1; i <= tenor; i++) {
+        rows += `<tr><td>${i}</td><td>${formatRupiah(Math.round(pokok))}</td><td>${formatRupiah(Math.round(bunga))}</td><td>${formatRupiah(Math.round(total))}</td></tr>`;
+    }
+    document.getElementById("jadwalCetak").innerHTML = rows;
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="laporan-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+
+        <a th:href="@{/ganti-password}">
+    🔐 Ganti Password
+</a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">postgres</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+    <h1>Laporan Bank App</h1>
+
+    <p>Pilih laporan yang ingin diekspor ke Excel, PDF, atau dicetak.</p>
+
+    <div class="dashboard-cards">
+        <div class="report-card">
+            <h2>👤</h2>
+            <p>Laporan Data Nasabah</p>
+
+            <a th:href="@{/export/nasabah/excel}" class="btn-excel">
+                Export Excel
+            </a>
+
+            <a th:href="@{/export/nasabah/pdf}" class="btn-pdf">
+                Export PDF
+            </a>
+
+            <br><br>
+
+            <a th:href="@{/laporan/nasabah}" class="btn-print">
+                Cetak
+            </a>
+        </div>
+
+        <div class="report-card">
+            <h2>💳</h2>
+            <p>Laporan Data Kredit</p>
+
+            <a th:href="@{/export/kredit/excel}" class="btn-excel">
+                Export Excel
+            </a>
+
+            <a th:href="@{/export/kredit/pdf}" class="btn-pdf">
+                Export PDF
+            </a>
+
+            <br><br>
+
+            <a th:href="@{/laporan/kredit}" class="btn-print">
+                Cetak
+            </a>
+        </div>
+    </div>
+
+    <hr class="soft-line">
+
+    <h2>Grafik Ringkasan Laporan</h2>
+
+    <div class="chart-grid">
+
+        <div class="chart-card">
+            <h3>Komposisi Data</h3>
+            <canvas id="chartJumlah"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Nilai Keuangan</h3>
+            <canvas id="chartKeuangan"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    const totalNasabah = /*[[${totalNasabah}]]*/ 0;
+    const totalKredit = /*[[${totalKredit}]]*/ 0;
+    const totalUser = /*[[${totalUser}]]*/ 0;
+    const totalSaldo = /*[[${totalSaldo}]]*/ 0;
+    const totalPinjaman = /*[[${totalPinjaman}]]*/ 0;
+
+    const saldoMiliar = totalSaldo / 1000000000;
+    const pinjamanMiliar = totalPinjaman / 1000000000;
+
+    new Chart(document.getElementById("chartJumlah"), {
+        type: "bar",
+        data: {
+            labels: ["Nasabah", "Kredit", "User"],
+            datasets: [{
+                label: "Jumlah Data",
+                data: [totalNasabah, totalKredit, totalUser],
+                backgroundColor: ["#2196F3", "#FF9800", "#9C27B0"],
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById("chartKeuangan"), {
+        type: "bar",
+        data: {
+            labels: ["Total Saldo", "Total Pinjaman"],
+            datasets: [{
+                label: "Nominal (Miliar Rupiah)",
+                data: [saldoMiliar, pinjamanMiliar],
+                backgroundColor: ["#4CAF50", "#FF9800"],
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Miliar Rupiah"
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

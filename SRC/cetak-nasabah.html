@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Cetak Detail Nasabah</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body class="print-page">
+
+<div class="print-container">
+
+    <div class="print-actions">
+        <button onclick="window.print()">
+            🖨️ Cetak
+        </button>
+
+        <a th:href="@{/daftar}">
+            Kembali
+        </a>
+    </div>
+
+    <div class="print-header">
+        <h1>BankApp</h1>
+        <h2>Detail Data Nasabah</h2>
+        <p>Dokumen ini dicetak dari Sistem Informasi BankApp.</p>
+    </div>
+
+    <hr>
+
+    <h3>Informasi Nasabah</h3>
+
+    <table class="print-table">
+        <tr>
+            <th>Nomor CIF</th>
+            <td th:text="${nasabah.nomorCif}">CIF000001</td>
+        </tr>
+
+        <tr>
+            <th>Nama Nasabah</th>
+            <td th:text="${nasabah.namaNasabah}">NAMA NASABAH</td>
+        </tr>
+
+        <tr>
+            <th>Nomor KTP</th>
+            <td th:text="${nasabah.nomorKtp}">1234567890123456</td>
+        </tr>
+
+        <tr>
+            <th>Alamat</th>
+            <td th:text="${nasabah.alamat}">Alamat</td>
+        </tr>
+
+        <tr>
+            <th>Handphone</th>
+            <td th:text="${nasabah.handphone}">08123456789</td>
+        </tr>
+
+        <tr>
+            <th>Nomor Rekening</th>
+            <td th:text="${nasabah.nomorRekening}">1234567890</td>
+        </tr>
+
+        <tr>
+            <th>Tanggal Buka Rekening</th>
+            <td th:text="${nasabah.tanggalBukaRekening}">2026-01-01</td>
+        </tr>
+
+        <tr>
+            <th>Saldo</th>
+            <td class="rupiah"
+                th:text="${nasabah.saldo}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>
+                <span th:if="${nasabah.statusAktif == null or nasabah.statusAktif == true}">
+                    Aktif
+                </span>
+
+                <span th:if="${nasabah.statusAktif == false}">
+                    Terhapus
+                </span>
+            </td>
+        </tr>
+    </table>
+
+    <h3>Data Kredit Terkait</h3>
+
+    <table class="print-table">
+        <thead>
+        <tr>
+            <th>No</th>
+            <th>Jumlah Pinjaman</th>
+            <th>Tenor</th>
+            <th>Bunga / Tahun</th>
+            <th>Cicilan / Bulan</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:if="${#lists.isEmpty(daftarKredit)}">
+            <td colspan="5">
+                Tidak ada data kredit aktif.
+            </td>
+        </tr>
+
+        <tr th:each="k, iter : ${daftarKredit}">
+            <td th:text="${iter.count}">1</td>
+
+            <td class="rupiah"
+                th:text="${k.jumlahPinjaman}">
+                0
+            </td>
+
+            <td th:text="${k.tenor + ' bulan'}">
+                12 bulan
+            </td>
+
+            <td th:text="${k.bungaTahunan + '%'}">
+                0%
+            </td>
+
+            <td class="rupiah"
+                th:text="${k.cicilanPerBulan}">
+                0
+            </td>
+        </tr>
+        </tbody>
+
+        <tfoot>
+        <tr>
+            <th colspan="4">Total Pinjaman Aktif</th>
+
+            <th class="rupiah"
+                th:text="${totalPinjaman}">
+                0
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="print-footer">
+        <p>Dicetak secara otomatis oleh BankApp.</p>
+    </div>
+
+</div>
+
+<script>
+    document
+        .querySelectorAll(".rupiah")
+        .forEach(function (cell) {
+            const angka = Number(cell.innerText);
+
+            if (!isNaN(angka)) {
+                cell.innerText =
+                    new Intl.NumberFormat(
+                        "id-ID",
+                        {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0
+                        }
+                    ).format(angka);
+            }
+        });
+</script>
+
+</body>
+</html>

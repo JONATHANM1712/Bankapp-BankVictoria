@@ -1,0 +1,2294 @@
+html, body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: transparent;
+}
+
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background blur umum */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(30px);
+    transform: scale(1.05);
+    z-index: -2;
+}
+
+/* Lapisan terang umum */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Supaya isi halaman muncul di atas background */
+.navbar,
+.container,
+.login-box {
+    position: relative;
+    z-index: 1;
+}
+
+/* Background halaman umum */
+.home-bg::before,
+.laporan-bg::before,
+.tentang-bg::before,
+.detail-kredit-bg::before,
+.input-bg::before,
+.daftar-bg::before,
+.simulasi-bg::before,
+.daftar-kredit-bg::before,
+.detail-bg::before,
+.user-bg::before,
+.audit-bg::before,
+.database-bg::before {
+    background-image: url('/images/ALD-1000024.jpg');
+}
+
+/* ===========================
+   NAVBAR SIDEBAR
+=========================== */
+
+/* ===========================
+   SIDEBAR KIRI TRANSPARAN
+=========================== */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 250px;
+    height: 100vh;
+
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-right: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 8px 0 28px rgba(0,0,0,0.25);
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 9999;
+}
+
+.sidebar-logo {
+    padding: 22px 18px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.22);
+}
+
+.sidebar-menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 12px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px 14px;
+    margin-bottom: 7px;
+
+    border-radius: 13px;
+
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+
+    text-shadow: 0 2px 7px rgba(0,0,0,0.6);
+    transition: 0.25s;
+}
+
+.sidebar-menu a:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateX(4px);
+}
+
+.sidebar-user {
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+}
+
+.login-user {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 7px rgba(0,0,0,0.6);
+}
+
+.sidebar .logout-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+
+    text-align: center;
+    padding: 13px 10px;
+
+    border-radius: 13px;
+
+    background: linear-gradient(135deg, #ff3b3b, #d60000);
+    color: white !important;
+
+    text-decoration: none;
+    font-weight: bold;
+
+    box-shadow: 0 8px 20px rgba(255,0,0,0.35);
+    transition: 0.25s;
+}
+
+.sidebar .logout-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ff7777, #ff0000);
+}
+
+/* scrollbar sidebar */
+.sidebar-menu::-webkit-scrollbar {
+    width: 7px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.35);
+    border-radius: 20px;
+}
+
+/* Matikan navbar lama */
+.navbar {
+    display: none !important;
+}
+
+/* ===========================
+   AREA KONTEN UTAMA
+=========================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Semua container utama digeser dari sidebar */
+.container {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 300px;
+
+    width: calc(100% - 320px);
+    max-width: none;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    padding: 30px;
+    border-radius: 20px;
+
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+
+    box-sizing: border-box;
+}
+
+/* Container umum */
+.container {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    padding: 30px;
+    border-radius: 20px;
+
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+/* Form agar tidak terlalu melebar */
+form {
+    max-width: 520px;
+}
+
+/* Input tetap rapi */
+input,
+select,
+textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tabel */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+    border-radius: 15px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(0px);
+}
+
+.data-table th {
+    background: rgba(255,255,255,0.20);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid rgba(255,255,255,0.30);
+    padding: 12px;
+    text-align: left;
+}
+
+.data-table tr:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+/* Header section */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-tambah {
+    background: purple;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.btn-tambah:hover {
+    background: #6d008c;
+}
+
+/* Search */
+.search-box {
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    width: 350px;
+    max-width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+}
+
+/* Tombol aksi */
+.btn-detail,
+.btn-edit,
+.btn-hapus {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.btn-detail {
+    background: blue;
+}
+
+.btn-edit {
+    background: darkorange;
+}
+
+.btn-hapus {
+    background: red;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 520px;
+    margin: 90px auto;
+    padding: 30px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    color: white;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: white;
+}
+
+.modal-content p {
+    font-size: 17px;
+    margin: 12px 0;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
+
+.close:hover {
+    color: red;
+}
+
+
+/* ===========================
+   SEARCH + PAGINATION FINAL
+=========================== */
+
+.search-pagination-box {
+    width: 100%;
+    margin: 22px 0 18px 0;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.search-form input {
+    width: 280px;
+    height: 52px;
+    padding: 0 18px;
+
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.55);
+
+    background: rgba(255,255,255,0.32);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    color: #111;
+    font-size: 17px;
+    outline: none;
+}
+
+.search-form input::placeholder {
+    color: rgba(0,0,0,0.45);
+}
+
+.search-form select {
+    width: 150px;
+    height: 52px;
+    padding: 0 16px;
+
+    border-radius: 16px;
+    border: 2px solid #222;
+
+    background: #e8c9a6;
+    color: #111;
+
+    font-size: 17px;
+    outline: none;
+}
+
+.search-form button,
+.search-form a {
+    height: 52px;
+    min-width: 110px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 22px;
+
+    border-radius: 16px;
+    border: none;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+
+    background: linear-gradient(135deg, #00008b, #2448ff);
+
+    box-shadow: 0 6px 14px rgba(0,0,120,0.25);
+    transition: 0.25s ease;
+}
+
+.search-form button:hover,
+.search-form a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0,0,160,0.35);
+}
+
+/* ===========================
+   PAGINATION INFO
+=========================== */
+
+.pagination-info {
+    margin: 18px 0 24px 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #000;
+}
+
+/* LOGIN PAGE */
+
+.login-bg::before {
+    background-image: url('/images/ABU aladdin 06.jpg');
+
+    filter: blur(30px);
+    transform: scale(1.05);
+}
+
+.login-bg::after {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.login-bg {
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+.login-box {
+    width: 450px;
+
+    padding: 45px;
+
+    border-radius: 30px;
+
+    background: rgba(255,255,255,0.15);
+
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+
+    border: 1px solid rgba(255,255,255,0.30);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.40);
+
+    text-align: center;
+}
+
+.login-box h1 {
+    color: white;
+
+    font-size: 38px;
+
+    margin-bottom: 10px;
+
+    text-shadow:
+        0 3px 15px rgba(0,0,0,0.7);
+}
+
+.login-box .subtitle {
+    color: rgba(255,255,255,0.95);
+
+    margin-bottom: 25px;
+
+    line-height: 1.5;
+}
+
+.login-box input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px;
+
+    margin: 10px 0;
+
+    border-radius: 14px;
+
+    border: none;
+
+    font-size: 15px;
+}
+
+.login-box button {
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: purple;
+
+    color: white;
+
+    font-weight: bold;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+.login-box button:hover {
+    background: #6d008c;
+}
+
+.error-text {
+
+    color: white;
+
+    background: red;
+
+    border: 1px solid rgba(255,80,80,0.40);
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+    backdrop-filter: blur(10px);
+}
+
+.success-text {
+
+    color: darkorange;
+
+    background: white;
+
+    border: 1px solid darkorange;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+}
+
+.register-link {
+    margin-top: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.register-link a {
+    color: lightgreen;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    color: yellow;
+    text-decoration: underline;
+}
+
+.login-box .alert-error {
+    background: red !important;
+    color: white !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+    margin: 15px 0 !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+.login-box .alert-error p {
+    margin: 0 !important;
+    color: white !important;
+}
+
+.login-box .alert-success {
+    background: green !important;
+    color: white !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+    margin: 15px 0 !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+.login-box .alert-success p {
+    margin: 0 !important;
+    color: white !important;
+}
+
+
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card {
+    flex: 1;
+    min-width: 220px;
+    padding: 25px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    text-align: center;
+}
+
+.dashboard-card h2 {
+    font-size: 42px;
+    margin: 0;
+    color: blue;
+}
+
+.dashboard-card p {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.form-box {
+    max-width: 450px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.9);
+    font-size: 15px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    box-shadow: 0 0 15px rgba(255,255,255,0.4);
+}
+
+.save-btn {
+    background: linear-gradient(135deg,#8e2de2,#4a00e0);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+}
+
+.cancel-btn {
+    background: red;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg,#8e2de2,#4a00e0);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg,#ff4d4d,#d60000);
+    color: white !important;
+    text-decoration: none;
+    padding: 14px 30px;
+    border-radius: 16px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media print {
+    .navbar,
+    .btn-tambah,
+    .btn-edit,
+    .btn-hapus,
+    .btn-detail,
+    .search-box,
+    .logout-btn {
+        display: none !important;
+    }
+
+    body::before,
+    body::after {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .container {
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+    }
+
+    .data-table {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* CARD LAPORAN */
+
+.report-card {
+    flex: 1;
+    min-width: 350px;
+
+    padding: 35px;
+
+    text-align: center;
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.18);
+
+    backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255,255,255,0.30);
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.20);
+}
+
+.report-card h2 {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.report-card p {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* TOMBOL EXCEL */
+
+.btn-excel {
+    display: inline-block;
+
+    background: linear-gradient(
+        135deg,
+        green,
+        lightgreen
+    );
+
+    color: yellow;
+
+    text-decoration: none;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    margin: 5px;
+}
+
+.btn-excel:hover {
+    transform: translateY(-2px);
+}
+
+/* TOMBOL PDF */
+
+.btn-pdf {
+    display: inline-block;
+
+    background: linear-gradient(
+        135deg,
+        red,
+        orange
+    );
+
+    color: lightcyan;
+
+    text-decoration: none;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    margin: 5px;
+}
+
+.btn-pdf:hover {
+    transform: translateY(-2px);
+}
+
+/* TOMBOL CETAK */
+
+.btn-print {
+    display: inline-block;
+
+    background: linear-gradient(
+        135deg,
+        blue,
+        lightblue
+    );
+
+    color: yellow;
+
+    text-decoration: none;
+
+    padding: 14px 25px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    border: none;
+
+    cursor: pointer;
+}
+
+.btn-print:hover {
+    transform: translateY(-2px);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.import-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.import-form input[type="file"] {
+    background: rgba(255,255,255,0.85);
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+.btn-import {
+    background: linear-gradient(135deg, hotpink, pink);
+    color: black;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.user-bg .container .edit-error {
+    background: red !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 14px 18px !important;
+    border-radius: 10px !important;
+    margin: 15px 0 25px !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+.user-bg .container .edit-error p {
+    margin: 0 !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+
+/* ===========================
+   ALERT / VALIDASI
+=========================== */
+
+.alert-error {
+    background: linear-gradient(135deg, #FFD54F, #FFB300);
+    color: #000000;
+    border: 2px solid #F57C00;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: 2px solid #1B5E20;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* ===========================
+   DASHBOARD
+=========================== */
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.dashboard-card,
+.report-card,
+.chart-card {
+    background: rgba(255,255,255,0.20);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 18px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,.20);
+    overflow: hidden;
+}
+
+.dashboard-card h2 {
+    margin: 0;
+    color: #1d27ff;
+    font-size: 36px;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.dashboard-card p,
+.report-card p {
+    margin-top: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+}
+
+.rupiah-dashboard {
+    font-size: 30px !important;
+    line-height: 1.3;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ===========================
+   LAPORAN & GRAFIK
+=========================== */
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.chart-card h3 {
+    margin-top: 0;
+    color: purple;
+}
+
+.chart-card canvas {
+    max-height: 330px;
+}
+
+.soft-line {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.35);
+    margin: 35px 0;
+}
+
+.btn-excel,
+.btn-pdf,
+.btn-print {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 6px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-excel {
+    background: green;
+}
+
+.btn-pdf {
+    background: palevioletred;
+}
+
+.btn-print {
+    background: blue;
+}
+
+.audit-bg .container {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.pagination a {
+    padding: 9px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.85);
+    color: purple;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.pagination a:hover,
+.pagination a.active {
+    background: purple;
+    color: white;
+}
+
+.kosong {
+    text-align: center;
+    font-weight: bold;
+    color: purple;
+}
+
+/* ===========================
+   FIX SIDEBAR MENUTUP KONTEN
+   TARUH PALING BAWAH style.css
+=========================== */
+
+:root {
+    --sidebar-width: 310px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width) !important;
+}
+
+/* Semua halaman setelah login digeser dari sidebar */
+body:not(.login-bg):not(.registrasi-bg) {
+    margin: 0 !important;
+    padding-left: var(--sidebar-width) !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Container jangan pakai margin-left besar lagi */
+.container,
+.form-container,
+.content,
+.main-content,
+.dashboard-container {
+    margin-left: 30px !important;
+    margin-right: 30px !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
+
+    width: auto !important;
+    max-width: none !important;
+    box-sizing: border-box;
+}
+
+/* Form input tetap rapi */
+form {
+    max-width: 600px;
+}
+
+/* Tabel tetap bisa scroll kalau kolom banyak */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Database Background Customization */
+
+.database-bg .container {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Tambah Pengguna Customization */
+
+.btn-tambah {
+    display: inline-block;
+    margin: 15px 0 20px 0;
+    padding: 11px 18px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, green, seagreen);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 420px;
+}
+
+.form-box input,
+.form-box select {
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.35);
+    font-size: 15px;
+}
+
+.btn-simpan,
+.btn-kembali {
+    display: inline-block;
+    padding: 11px 18px;
+    border-radius: 12px;
+    border: none;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-simpan {
+    background: linear-gradient(90deg, green, lime);
+    color: white;
+}
+
+.btn-kembali {
+    background: linear-gradient(135deg, #777, #444);
+    color: white;
+}
+
+/* ===========================
+   PAGINATION FINAL FIX
+=========================== */
+
+.pagination {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: 25px !important;
+    flex-wrap: wrap !important;
+}
+
+.pagination a,
+.pagination span {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    height: 44px !important;
+
+    padding: 0 !important;
+
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    border-radius: 13px !important;
+    border: 1px solid rgba(255,255,255,0.55) !important;
+
+    background: rgba(255,255,255,0.88) !important;
+    color: purple !important;
+
+    text-decoration: none !important;
+    font-size: 19px !important;
+    font-weight: bold !important;
+
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+
+    transition: 0.25s !important;
+}
+
+.pagination a:hover {
+    transform: translateY(-2px) !important;
+    background: rgba(255,255,255,0.98) !important;
+}
+
+.pagination a.active {
+    background: linear-gradient(135deg, crimson, darkorchid) !important;
+    color: white !important;
+    box-shadow: 0 8px 18px rgba(140,0,255,0.35) !important;
+}
+
+.pagination .disabled {
+    opacity: 0.45 !important;
+    pointer-events: none !important;
+}
+
+/* ===========================
+   SEARCH, SORTING, SOFT DELETE, RESTORE
+=========================== */
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status-badge.aktif {
+    background: rgba(34, 197, 94, 0.22);
+    color: #166534;
+    border: 1px solid rgba(34, 197, 94, 0.45);
+}
+
+.status-badge.terhapus {
+    background: rgba(239, 68, 68, 0.22);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.btn-restore {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, olive, springgreen);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 2px;
+}
+
+.search-pagination-box select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.8);
+    color: #333;
+    font-weight: bold;
+}
+
+.data-table th a {
+    text-decoration: none;
+    font-size: 13px;
+    margin-left: 4px;
+    opacity: 0.85;
+}
+
+.data-table th a:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.data-table th {
+    white-space: nowrap;
+}
+
+/* ===========================
+   AUTO CIF, CETAK, TOAST, LOADING, BREADCRUMB
+=========================== */
+
+
+.form-note {
+    display: block;
+    margin-left: 6px;
+    margin-top: -2px;
+    margin-bottom: 8px;
+    color: dimgray;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.toast-message {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    min-width: 280px;
+    max-width: 420px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    animation: slideToast 0.35s ease-out;
+}
+
+.toast-hide {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.4s ease;
+}
+
+@keyframes slideToast {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    z-index: 99998;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.spinner {
+    width: 58px;
+    height: 58px;
+    border: 7px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spinLoading 0.9s linear infinite;
+    margin-bottom: 14px;
+}
+
+@keyframes spinLoading {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* CETAK DETAIL NASABAH */
+
+.print-page {
+    background: mintcream;
+    font-family: Arial, sans-serif;
+    color: #111111;
+}
+
+.print-container {
+    width: 850px;
+    margin: 30px auto;
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.print-header {
+    text-align: center;
+}
+
+.print-header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.print-header h2 {
+    margin: 8px 0;
+    font-size: 24px;
+}
+
+.print-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.print-actions button,
+.print-actions a {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: mediumblue;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 28px;
+}
+
+.print-table th,
+.print-table td {
+    border: 1px solid mistyrose;
+    padding: 11px 12px;
+    text-align: left;
+}
+
+.print-table th {
+    background: mintcream;
+    width: 230px;
+}
+
+.print-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 13px;
+    color: #444444;
+}
+
+@media print {
+    body {
+        background: white !important;
+    }
+
+    .print-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .print-actions {
+        display: none;
+    }
+
+    .print-table th,
+    .print-table td {
+        border: 1px solid #000000;
+    }
+}
+
+/* ===========================
+   FIX FORM INPUT NASABAH & KREDIT
+=========================== */
+
+.input-bg .container,
+.simulasi-bg .container {
+    max-width: 760px !important;
+}
+
+.bank-form {
+    max-width: 520px;
+    margin-top: 25px;
+}
+
+.bank-form label {
+    display: block;
+    margin: 14px 0 7px;
+    font-weight: bold;
+    color: #222;
+    font-size: 16px;
+}
+
+.bank-form input,
+.bank-form select {
+    width: 100%;
+    height: 48px;
+    padding: 0 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.88);
+    font-size: 16px;
+    outline: none;
+}
+
+.bank-form input:focus,
+.bank-form select:focus {
+    box-shadow: 0 0 0 3px rgba(0, 70, 255, 0.25);
+}
+
+.bank-form input[readonly] {
+    background: rgba(240,240,240,0.9);
+    color: #333;
+    font-weight: bold;
+}
+
+.bank-form button {
+    margin-top: 22px;
+    padding: 13px 26px;
+    border-radius: 13px;
+    border: none;
+    background: linear-gradient(135deg, purple, darkviolet);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.bank-form button:hover {
+    transform: translateY(-2px);
+}
+
+.bank-form .batal {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 13px 20px;
+    border-radius: 13px;
+    background: crimson;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.form-note {
+    display: block;
+    margin-top: 6px;
+    color: #444;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999999;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 7px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spinLoading 0.8s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spinLoading {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===========================
+   FIX FORM INPUT NASABAH FINAL
+=========================== */
+
+.input-bg .container {
+    max-width: 760px !important;
+    width: auto !important;
+}
+
+.input-bg .bank-form {
+    width: 100%;
+    max-width: 520px !important;
+}
+
+.input-bg .bank-form input,
+.input-bg .bank-form select {
+    width: 100% !important;
+    max-width: 520px !important;
+}
+
+.input-bg #nomorCif {
+    background: rgba(240,240,240,0.92) !important;
+    color: #222 !important;
+    font-weight: bold !important;
+    cursor: not-allowed;
+}
+
+.input-bg .form-note {
+    margin-left: 0 !important;
+    margin-top: 7px !important;
+    margin-bottom: 12px !important;
+    color: #444 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+/* ===========================
+   FIX INPUT NASABAH MANUAL CIF
+=========================== */
+
+.input-bg .container {
+    max-width: 760px !important;
+    width: auto !important;
+}
+
+.input-bg h1,
+.simulasi-bg h1 {
+    color: purple !important;
+    font-size: 34px !important;
+    margin-bottom: 25px !important;
+}
+
+.input-bg .breadcrumb {
+    margin-bottom: 22px !important;
+    font-size: 16px !important;
+}
+
+.input-bg .bank-form {
+    max-width: 520px !important;
+}
+
+.input-bg .bank-form label {
+    display: block !important;
+    margin: 14px 0 7px !important;
+    font-weight: bold !important;
+    color: #222 !important;
+    font-size: 16px !important;
+}
+
+.input-bg .bank-form input,
+.input-bg .bank-form select {
+    width: 100% !important;
+    max-width: 520px !important;
+    height: 48px !important;
+    padding: 0 15px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.65) !important;
+    background: rgba(255,255,255,0.88) !important;
+    font-size: 16px !important;
+    outline: none !important;
+    color: #111 !important;
+    font-weight: normal !important;
+    cursor: text !important;
+}
+
+.input-bg #nomorCif {
+    background: rgba(255,255,255,0.88) !important;
+    color: #111 !important;
+    font-weight: normal !important;
+    cursor: text !important;
+}
+
+.input-bg .bank-form button {
+    margin-top: 22px !important;
+    padding: 13px 26px !important;
+    border-radius: 13px !important;
+    border: none !important;
+    background: linear-gradient(135deg, purple, darkviolet) !important;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+}
+
+/* ===============================
+ MODAL JADWAL ANGSURAN
+================================ */
+
+#modalJadwal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.55);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+#modalJadwal .modal-content {
+    width: 88%;
+    max-width: 1000px;
+
+    max-height: none;
+    min-height: auto;
+
+    margin: 0 auto;
+    padding: 32px 38px;
+
+    border-radius: 24px;
+
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    color: white;
+
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+#modalJadwal .table-wrapper {
+    width: 100%;
+    max-height: 430px;
+
+    overflow-y: auto;
+    overflow-x: auto;
+
+    margin-top: 20px;
+    border-radius: 16px;
+}
+
+#modalJadwal .data-table {
+    min-width: 850px;
+}
+
+#modalJadwal .data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255,255,255,0.35);
+}
+
+#modalJadwal .close {
+    position: sticky;
+    top: 0;
+    float: right;
+    z-index: 20;
+}
+
+.jadwal-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+}
+
+.jadwal-card {
+    background: rgba(255,255,255,0.22);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 16px;
+    padding: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.jadwal-card span {
+    display: block;
+    margin-top: 8px;
+    font-size: 18px;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    #modalJadwal .modal-content {
+        width: 94%;
+        padding: 24px;
+    }
+
+    .jadwal-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* ===========================
+   FITUR MINGGU 4 - APPROVAL, CETAK, PASSWORD
+=========================== */
+.kredit-statistik { margin: 18px 0; }
+.approval-cards .dashboard-card, .activity-cards .dashboard-card { min-height: 120px; }
+.password-strength { margin-top: 8px; font-weight: 700; color: white; }
+.strength-bar { height: 8px; width: 100%; border-radius: 99px; background: rgba(255,255,255,.25); margin-bottom: 6px; overflow: hidden; }
+.strength-bar::after { content: ""; display: block; height: 100%; border-radius: 99px; }
+.strength-bar.weak::after { width: 25%; background: crimson; }
+.strength-bar.medium::after { width: 60%; background: gold; }
+.strength-bar.strong::after { width: 100%; background: limegreen; }
+.surat-container { max-width: 900px; margin: 30px auto; background: white; color: #1f2937; padding: 40px; border-radius: 18px; box-shadow: 0 18px 45px rgba(0,0,0,.25); }
+.surat-header { text-align: center; border-bottom: 3px solid dodgerblue; margin-bottom: 25px; padding-bottom: 15px; }
+.surat-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 22px; }
+.ttd-area { display: grid; grid-template-columns: 1fr 260px; margin-top: 45px; }
+.ttd-box { text-align: center; }
+.print-table { color: navy; }
+@media print {
+    body { background: white !important; }
+    .no-print { display: none !important; }
+    .surat-container { box-shadow: none; margin: 0; border-radius: 0; }
+}
+
+/* ===========================
+   AUDIT LOG PROFESIONAL
+=========================== */
+
+.audit-container {
+    max-width: 1180px;
+    overflow-x: hidden;
+}
+
+.audit-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.audit-table {
+    min-width: 1250px;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.audit-table th {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 10px 12px;
+}
+
+.audit-table td {
+    font-size: 13px;
+    padding: 10px 12px;
+    vertical-align: middle;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.audit-table tbody tr td:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.audit-table tbody tr td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.audit-table .badge {
+    white-space: nowrap;
+}
+
+.audit-table .user-agent {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audit-container .search-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 18px 0;
+}
+
+.audit-container .search-box input {
+    width: 360px;
+    max-width: 100%;
+}
+
+.audit-container .pagination {
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.audit-container .pagination-info {
+    margin-top: 18px;
+    text-align: left;
+}
+
+/* ===========================
+   PAGINATION AUDIT LOG
+=========================== */
+
+.audit-pagination {
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    clear: both;
+}
+
+.audit-pagination .page-btn {
+    min-width: 120px;
+    text-align: center;
+    padding: 11px 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.88);
+    color: #1e1b4b;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+.audit-pagination .page-info {
+    min-width: 120px;
+    text-align: center;
+    padding: 11px 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.72);
+    color: #1e1b4b;
+    font-weight: 800;
+}
+
+/* ===========================
+   BACKUP & RESTORE DATABASE
+=========================== */
+
+.backup-container {
+    max-width: 1180px;
+}
+
+.backup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+    margin: 28px 0 35px;
+}
+
+.backup-card {
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 22px;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22);
+}
+
+.backup-card h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.backup-card p {
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+.backup-btn,
+.restore-form button {
+    display: inline-block;
+    padding: 13px 22px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, teal, darkorchid);
+    color: white;
+    text-decoration: none;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+
+.restore-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.restore-form input[type="file"] {
+    background: rgba(255, 255, 255, 0.86);
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.backup-table-wrapper {
+    margin-top: 18px;
+    overflow-x: auto;
+}
+
+.backup-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.backup-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.backup-table td {
+    padding: 13px 12px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.backup-table tbody tr td:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.backup-table tbody tr td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.badge-success {
+    background: limegreen;
+    color: white;
+}
+
+.badge-danger {
+    background: red;
+    color: white;
+}
+
+.badge-warning {
+    background: darkorange;
+    color: white;
+}
+
+.alert-success {
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(22, 163, 74, 0.16);
+    color: green;
+    font-weight: 700;
+    margin: 18px 0;
+}
+
+.alert-error {
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(220, 38, 38, 0.16);
+    color: sienna;
+    font-weight: 700;
+    margin: 18px 0;
+}
+
+/* ===========================
+   LOGO BANK VICTORIA
+=========================== */
+
+.sidebar-logo {
+    width: 100%;
+    padding: 26px 18px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    border-bottom: 1px solid rgba(255,255,255,0.22);
+}
+
+.logo-bank-sidebar {
+    width: 210px;
+    height: auto;
+
+    display: block;
+    margin: 0 auto;
+
+    object-fit: contain;
+}
+
+.auth-brand {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.logo-bank-auth {
+    width: 250px;
+    height: auto;
+
+    display: block;
+    margin: 0 auto;
+
+    object-fit: contain;
+}
+
+/* Kalau login/registrasi terlalu besar di layar kecil */
+@media (max-width: 600px) {
+    .logo-bank-auth {
+        width: 220px;
+    }
+
+    .logo-bank-sidebar {
+        width: 190px;
+    }
+}
+
+/* ===========================
+   CAPTCHA
+=========================== */
+
+.captcha-box {
+    margin: 22px 0;
+    text-align: center;
+}
+
+.captcha-box label {
+    display: block;
+    margin-bottom: 12px;
+
+    color: white;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.captcha-soal,
+.captcha-question {
+    width: 100%;
+    padding: 0px;
+    margin-bottom: 14px;
+
+    background: lightyellow;
+    border-radius: 16px;
+    border: 2px solid orangered;
+
+    color: purple;
+    font-size: 38px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 3px;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.25),
+        inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* ===========================
+   JAM DIGITAL DASHBOARD
+=========================== */
+
+.welcome-card{
+
+    width:420px;
+
+    margin:30px auto;
+
+    padding:28px;
+
+    border-radius:24px;
+
+    text-align:center;
+
+    background:rgba(255,255,255,.22);
+
+    backdrop-filter:blur(5px);
+
+    -webkit-backdrop-filter:blur(5px);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    box-shadow:0 12px 28px rgba(0,0,0,.25);
+
+}
+
+.greeting-emoji{
+
+    font-size:62px;
+
+    margin-bottom:10px;
+
+}
+
+.welcome-card h2{
+
+    margin:0;
+
+    font-size:34px;
+
+    color:lightyellow;
+
+    text-shadow:0 2px 8px rgba(0,0,0,.35);
+
+}
+
+.clock-time{
+
+    margin-top:18px;
+
+    font-size:52px;
+
+    font-weight:900;
+
+    color:yellow;
+
+    letter-spacing:3px;
+
+}
+
+.clock-date{
+
+    margin-top:10px;
+
+    font-size:18px;
+
+    color:lightgoldenrodyellow;
+
+}

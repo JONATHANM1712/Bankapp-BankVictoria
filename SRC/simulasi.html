@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simulasi Kredit</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="simulasi-bg">
+
+<nav class="sidebar">
+
+<div class="sidebar-logo">
+    <img th:src="@{/images/Bank_Victoria_logo.png}"
+         alt="Bank Victoria"
+         class="logo-bank-sidebar">
+</div>
+
+    <div class="sidebar-menu">
+        <a th:href="@{/}">🏠 Beranda</a>
+        <a th:href="@{/input}">➕ Input Nasabah</a>
+        <a th:href="@{/daftar}">👥 Daftar Nasabah</a>
+        <a th:href="@{/simulasi}">💳 Simulasi Kredit</a>
+        <a th:href="@{/daftar-kredit}">📋 Daftar Kredit</a>
+        <a th:href="@{/laporan}">📊 Laporan</a>
+        <a th:href="@{/tentang}">ℹ️ Tentang Aplikasi</a>
+        <a th:href="@{/ganti-password}">🔐 Ganti Password</a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/users}">
+            👤 Manajemen User
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/audit-log}">
+            📝 Audit Log
+        </a>
+
+        <a th:if="${session.userLogin != null and session.userLogin.role == 'ADMIN'}"
+           th:href="@{/database}">
+            🗄️ Database
+        </a>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="login-user">
+            👤 <span th:text="${session.username}">User</span>
+        </div>
+
+        <a th:href="@{/logout}" class="logout-btn">
+            🚪 Logout
+        </a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <h1 th:text="${modeEdit} ? 'Edit Pengajuan Kredit' : 'Simulasi Kredit Bank'">
+        Simulasi Kredit Bank
+    </h1>
+
+    <div th:if="${error}" class="alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${success}" class="alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <form th:action="@{/simpan-kredit}"
+          th:object="${kredit}"
+          method="post"
+          class="bank-form form-loading">
+
+        <input type="hidden" th:field="*{kreditId}">
+
+        <div class="form-group">
+            <label for="nomorCif">Nama Pemohon / Nasabah</label>
+
+            <select id="nomorCif" name="nomorCif" required>
+                <option value="">-- Pilih Nasabah --</option>
+
+                <option th:each="nasabah : ${daftarNasabah}"
+                        th:value="${nasabah.nomorCif}"
+                        th:text="${nasabah.nomorCif + ' - ' + nasabah.namaNasabah}"
+                        th:selected="${kredit.nasabah != null and kredit.nasabah.nomorCif == nasabah.nomorCif}">
+                    NASABAH
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="jumlahPinjaman">Jumlah Pinjaman</label>
+
+            <input id="jumlahPinjaman"
+                   type="number"
+                   th:field="*{jumlahPinjaman}"
+                   placeholder="Contoh: 50000000"
+                   min="0"
+                   step="1"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="tenor">Tenor / Lama Kredit</label>
+
+            <input id="tenor"
+                   type="number"
+                   th:field="*{tenor}"
+                   placeholder="Contoh: 12"
+                   min="0"
+                   step="1"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="bungaTahunan">Bunga per Tahun (%)</label>
+
+            <input id="bungaTahunan"
+                   type="number"
+                   th:field="*{bungaTahunan}"
+                   placeholder="Contoh: 4"
+                   min="0"
+                   step="0.01"
+                   required>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit"
+                    class="save-btn"
+                    th:text="${modeEdit} ? 'Update Pengajuan' : 'Simpan Pengajuan'">
+                Simpan Pengajuan
+            </button>
+
+            <a th:if="${modeEdit}"
+               th:href="@{/daftar-kredit}"
+               class="cancel-btn">
+                Batal Edit
+            </a>
+        </div>
+
+    </form>
+
+    <p class="info">
+        Setelah disimpan, sistem otomatis menghitung estimasi cicilan per bulan dan jadwal angsuran dapat dilihat di halaman Daftar Kredit.
+    </p>
+
+</div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Memproses data kredit...</p>
+</div>
+
+<script th:src="@{/js/app-ui.js}"></script>
+
+</body>
+</html>
